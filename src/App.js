@@ -11,13 +11,14 @@ function App() {
 
 
   const addDigit = (e) => {
-    
+
     if (willBeCleared && current !== '0') {
-        setCurrent(e.target.innerHTML)
-        setWillBeCleared(false)
-    }else{
-    current !== '0' ? setCurrent(current + e.target.innerHTML) : setCurrent(e.target.innerHTML)
-    setOperand('')}
+      setCurrent(e.target.innerHTML)
+      setWillBeCleared(false)
+    } else {
+      current !== '0' ? setCurrent(current + e.target.innerHTML) : setCurrent(e.target.innerHTML)
+      setOperand('')
+    }
   }
 
   const clearAll = () => {
@@ -31,7 +32,7 @@ function App() {
     console.log(`Calculating ${op1} ${op} ${op2}`);
     switch (op) {
       case '+': return parseFloat((op1 + op2).toFixed(4));
-      case '-': return parseFloat((op1 - op2).toFixed(4));
+      case '-': return parseFloat((op1 + op2).toFixed(4));
       case 'x': return parseFloat((op1 * op2).toFixed(4));
       case '/': return parseFloat((op1 / op2).toFixed(4));
       default: break;
@@ -40,11 +41,17 @@ function App() {
   const addOperand = (e) => {
     if (operand === '' && current !== '0' && old !== '0') {
       console.log(old);
-      setOld(calc(old.charAt(old.length - 1), parseFloat(old), parseFloat(current)) + e.target.innerHTML)
+      if (old.charAt(old.length - 1) === '-' && isNaN(old.charAt(old.length - 2)))
+        setOld(calc(old.charAt(old.length - 2), parseFloat(old), parseFloat(-current)) + e.target.innerHTML)
+      else if (old.charAt(old.length - 1) === '-')
+        setOld(calc(old.charAt(old.length - 1), parseFloat(old), parseFloat(-current)) + e.target.innerHTML)
+      else
+        setOld(calc(old.charAt(old.length - 1), parseFloat(old), parseFloat(current)) + e.target.innerHTML)
+
       setCurrent('0')
       setOperand(e.target.innerHTML);
-    } 
-    
+    }
+
     else if (operand === '' && current !== '0' && old === '0') {
       setOld(current + e.target.innerHTML)
       setCurrent('0')
@@ -52,7 +59,11 @@ function App() {
     }
 
     else if (operand !== '' && current === '0') {
-      setOld(old.slice(0, old.length - 1) + e.target.innerHTML)
+      console.log(e.target.innerHTML);
+      if (e.target.innerHTML === "-" && isNaN(old.charAt(old.length - 1)) && !isNaN(old.charAt(old.length - 2))) {
+        setOld(old + e.target.innerHTML)
+      } else
+        setOld(old.slice(0, old.length - 1) + e.target.innerHTML);
       setOperand(e.target.innerHTML);
     }
   }
@@ -65,10 +76,17 @@ function App() {
     if (operand === '' && current !== '0' && old !== '0') {
       console.log(old);
       setOld('0')
-      setCurrent(calc(old.charAt(old.length - 1), parseFloat(old), parseFloat(current)))
+
+      if (old.charAt(old.length - 1) === '-' && isNaN(old.charAt(old.length - 2)))
+        setCurrent(calc(old.charAt(old.length - 2), parseFloat(old), parseFloat(-current)))
+      else if (old.charAt(old.length - 1) === '-')
+        setCurrent(calc(old.charAt(old.length - 1), parseFloat(old), parseFloat(-current)))
+      else
+        setCurrent(calc(old.charAt(old.length - 1), parseFloat(old), parseFloat(current)))
+
       setOperand('')
       setWillBeCleared(true)
-    } 
+    }
   }
 
   return (
